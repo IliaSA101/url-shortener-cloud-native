@@ -47,3 +47,23 @@
 * `/k8s` — манифесты Kubernetes и Helm-чарты.
 * `/docker` — файлы для локального запуска (docker-compose).
 * `/docs` — документация проекта и Architecture Decision Records (ADR).
+
+## 💻 Локальная разработка
+
+### Историческая справка: Инициализация проекта с нуля
+
+*(Примечание: эта команда нужна только для первичного создания каркаса приложения. Если вы клонировали этот репозиторий, выполнять её **не нужно**. Все зависимости будут установлены автоматически при сборке Docker-контейнеров).*
+
+В соответствии с Cloud Native подходом, для локальной разработки не требуется установка PHP, Composer или других языковых утилит на хост-машину. Для первичной генерации проекта Laravel (API Gateway) без локального PHP использовалась следующая команда в корне репозитория:
+
+**Для Linux, macOS и PowerShell (Windows):**
+
+```bash
+docker run --rm -v "${PWD}/services":/app -w /app composer create-project laravel/laravel gateway
+```
+
+**Для стандартной командной строки (CMD) Windows:**
+
+```cmd
+docker run --rm -v "%cd%\services":/app -w /app composer create-project laravel/laravel gateway
+```
