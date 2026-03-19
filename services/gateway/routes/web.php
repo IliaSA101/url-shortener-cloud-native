@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\RedirectController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+// Ловим любой короткий код после слеша
+Route::get('/{code}', [RedirectController::class, 'redirect']);

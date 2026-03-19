@@ -30,3 +30,42 @@ docker compose exec gateway php artisan make:migration create_click_stats_table
 ```bash
 docker compose exec gateway php artisan migrate
 ```
+
+### 3. Настройка Redis (Кэширование)
+Для предотвращения коллизий ключей в Redis (если на сервере запущено несколько проектов), мы жестко переопределяем префикс приложения. 
+
+Добавьте в ваш `.env` файл:
+```env
+REDIS_PREFIX="shortener:"
+```
+После изменения конфигурации не забудьте сбросить кэш: `docker compose exec gateway php artisan config:clear`.
+
+---
+
+## 📖 API Reference
+
+### 1. Создание короткой ссылки
+Генерирует уникальный короткий код и сразу прогревает кэш в Redis.
+
+* **Эндпоинт:** `POST /api/links`
+* **Headers:** `Accept: application/json`
+
+**Request Body:**
+```json
+{
+    "original_url": "https://habr.com/ru/articles/123456/"
+}
+```
+
+**Response (201 Created):**
+```json
+{
+    "short_code": "jMWRD6",
+    "short_url": "http://localhost:8000/jMWRD6",
+    "original_url": "https://habr.com/ru/articles/123456/"
+}
+```
+
+### 2. Использование (Редирект)
+* **Эндпоинт:** `GET /{short_code}` (например, `http://localhost:8000/jMWRD6`)
+* **Логика:** Сервис использует паттерн Cache-Aside. Сначала выполняется попытка чтения (Hot Path) из Redis. При cache miss (промахе) данные достаются из PostgreSQL, кэш восстанавливается, и выполняется `302 Found` редирект.
