@@ -1,49 +1,8 @@
-# Cloud Native URL Shortener
+# Kubernetes Manifests
 
-![Status](https://img.shields.io/badge/Status-Work_in_Progress-yellow)
-![Architecture](https://img.shields.io/badge/Architecture-Microservices-blue)
-![Infrastructure](https://img.shields.io/badge/Infrastructure-Kubernetes_(K3s)-blueviolet)
+Здесь хранятся манифесты для деплоя приложений и инфраструктурных компонентов в кластер K3s.
 
-Учебный pet-проект для освоения навыков построения Cloud Native архитектуры, работы с микросервисами, Infrastructure as Code (IaC) и Kubernetes.
-
-## 🎯 О проекте
-Это масштабируемый сервис сокращения ссылок с асинхронной аналитикой переходов. Проект спроектирован с учетом высоких нагрузок (Highload) и разворачивается в кластере Kubernetes (K3s) на трех VDS-серверах.
-
-## 🏗 Целевая архитектура
-
-```text
-┌─────────────────────────────────────────────────────────────────┐
-│                        ИНФРАСТРУКТУРА                           │
-│                                                                 │
-│  VDS-1 (Master)          VDS-2 (Worker)      VDS-3 (Worker)     │
-│  ┌─────────────┐        ┌──────────────┐    ┌──────────────┐    │
-│  │ K3s Server  │        │ K3s Agent    │    │ K3s Agent    │    │
-│  │ Prometheus  │        │ PostgreSQL   │    │ Redis        │    │
-│  │ Grafana     │        │ RabbitMQ     │    │ Metabase     │    │
-│  │ Traefik     │        │              │    │              │    │
-│  └─────────────┘        └──────────────┘    └──────────────┘    │
-│                                                                 │
-│                     K3s Cluster (Pods):                         │
-│  ┌──────────────┐   ┌──────────────┐   ┌───────────────────┐    │
-│  │ API Gateway  │   │ Shortener    │   │ Analytics Worker  │    │
-│  │ (Laravel)    │   │ (Python/     │   │ (Python)          │    │
-│  │              │   │  FastAPI)    │   │                   │    │
-│  └──────────────┘   └──────────────┘   └───────────────────┘    │
-└─────────────────────────────────────────────────────────────────┘
-```
-
-## 🛠 Технологический стек
-
-* **Backend:** PHP (Laravel), Python (FastAPI)
-* **Databases & Queues:** PostgreSQL 16, Redis 7, RabbitMQ
-* **Infrastructure:** Docker, Kubernetes (K3s), Terraform, Ansible
-* **Observability & BI:** Prometheus, Grafana, Metabase
-* **CI/CD:** GitHub Actions
-
-## 📂 Структура репозитория
-
-* `/services` — исходный код микросервисов.
-* `/infrastructure` — IaC (Terraform для провиженинга VDS, Ansible для настройки).
-* `/k8s` — манифесты Kubernetes и Helm-чарты.
-* `/docker` — файлы для локального запуска (docker-compose).
-* `/docs` — документация проекта и Architecture Decision Records (ADR).
+## Структура
+* **`/manifests`** — Deployments, Services и Ingress для микросервисов (Gateway, Redirector, Analytics Worker).
+* **`/stateful`** — StatefulSets и PersistentVolumeClaims (PVC) для баз данных и очередей (PostgreSQL, Redis, RabbitMQ).
+* **`/monitoring`** — конфигурации для Prometheus, Grafana и других инструментов Observability.

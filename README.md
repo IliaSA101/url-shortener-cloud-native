@@ -56,14 +56,9 @@
 
 В соответствии с Cloud Native подходом, для локальной разработки не требуется установка PHP, Composer или других языковых утилит на хост-машину. Для первичной генерации проекта Laravel (API Gateway) без локального PHP использовалась следующая команда в корне репозитория:
 
-**Для Linux, macOS и PowerShell (Windows):**
-
+**Универсальная команда (Linux, macOS, Windows PowerShell):**
 ```bash
-docker run --rm -v "${PWD}/services":/app -w /app composer create-project laravel/laravel gateway
+docker run --rm -v "./services:/app" -w /app composer create-project laravel/laravel gateway
 ```
 
-**Для стандартной командной строки (CMD) Windows:**
-
-```cmd
-docker run --rm -v "%cd%\services":/app -w /app composer create-project laravel/laravel gateway
-```
+> **Примечание для Windows:** Использование относительного пути `./services:/app` позволяет избежать распространенной ошибки Docker `invalid reference format`, которая возникает из-за парсинга буквы диска (например, `D:\`) в абсолютных путях.
