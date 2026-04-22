@@ -68,6 +68,22 @@ services:
     depends_on:
       - gateway
     restart: unless-stopped
+  
+  redirector:
+    build:
+      context: ../services/redirector
+      dockerfile: Dockerfile
+    container_name: url_shortener_redirector
+    ports:
+      - "8001:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      rabbitmq:
+        condition: service_started
+    restart: unless-stopped
 
 volumes:
   postgres_data:
