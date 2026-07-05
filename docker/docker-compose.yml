@@ -73,6 +73,7 @@ services:
     build:
       context: ../services/redirector
       dockerfile: Dockerfile
+      target: development # <--- ВОТ ЗДЕСЬ МЫ ЗАДАЕМ РЕЖИМ
     container_name: url_shortener_redirector
     ports:
       - "8001:8000"
@@ -81,7 +82,6 @@ services:
       - ../services/redirector/.env
     volumes:
       - ../services/redirector:/app
-    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
     depends_on:
       postgres:
         condition: service_healthy

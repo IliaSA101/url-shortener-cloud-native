@@ -1,7 +1,5 @@
-# services/redirector/tests/conftest.py
-
 import pytest
-from unittest.mock import AsyncMock, patch
+from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi.testclient import TestClient
 from app.main import app
 
@@ -25,9 +23,12 @@ def mock_infrastructure():
         mock_redis.set.return_value = True
         
         # 2. По умолчанию в БД тоже ничего нет
-        # У pg_pool.acquire() хитрая структура, т.к. это асинхронный контекстный менеджер
+        # У pg_pool.acquire() хитрая структура, т.к. это контекстный менеджер
         mock_conn = AsyncMock()
         mock_conn.fetchval.return_value = None
+
+        # ФИКС: Делаем acquire обычным (синхронным) моком, чтобы он не возвращал корутину!
+        mock_pg.acquire = MagicMock()
         mock_pg.acquire.return_value.__aenter__.return_value = mock_conn
 
         # Возвращаем моки в тесты, чтобы там можно было менять их поведение и проверять вызовы
