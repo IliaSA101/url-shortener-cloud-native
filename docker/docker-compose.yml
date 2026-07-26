@@ -27,7 +27,14 @@ services:
     volumes:
       - redis_data:/data
     restart: unless-stopped
+    # ДОБАВЛЯЕМ ВОТ ЭТОТ БЛОК:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
+  # docker/docker-compose.yml (фрагмент)
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: url_shortener_rabbitmq
@@ -35,11 +42,17 @@ services:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest
     ports:
-      - "5672:5672"   # Основной порт для подключения наших микросервисов
-      - "15672:15672" # Порт для веб-интерфейса (Management UI)
+      - "5672:5672"
+      - "15672:15672"
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
     restart: unless-stopped
+    # ДОБАВЛЯЕМ ВОТ ЭТОТ БЛОК:
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     
   gateway:
     build:
@@ -86,9 +99,9 @@ services:
       postgres:
         condition: service_healthy
       redis:
-        condition: service_started
+        condition: service_healthy
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:
