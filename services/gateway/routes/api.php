@@ -11,7 +11,11 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 // Эндпоинт выдачи токена (Login)
-Route::post('/auth/token', [AuthController::class, 'store']);
+// Навешиваем защиту от брутфорса паролей (5 попыток в минуту)
+Route::post('/auth/token', [AuthController::class, 'store'])
+    ->middleware('throttle:auth-token');
 
 // Наш эндпоинт для создания ссылок
-Route::post('/links', [LinkController::class, 'store']);
+// Защищаем жестким лимитом (10 в минуту на юзера/IP)
+Route::post('/links', [LinkController::class, 'store'])
+    ->middleware('throttle:link-create');
